@@ -14,7 +14,7 @@ class AuthController extends Controller
     public function registerMenthor(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:menthors,email',
             'password' => 'required|string|min:8|confirmed',
@@ -23,25 +23,29 @@ class AuthController extends Controller
             'commentaire' => 'nullable|string',
             'annee_experience' => 'nullable|numeric',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
-
-        $menthor = Menthor::create([
-            'name' => $request->name,
-            'prenom' => $request->prenom,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'numero_siret' => $request->numero_siret,
-            'score' => $request->score ?? 0,
-            'commentaire' => $request->commentaire,
-            'annee_experience' => $request->annee_experience ?? 0,
-        ]);
-
-        return response()->json(['message' => 'Menthor created successfully!', 'menthor' => $menthor], 201);
+    
+        // Créer le mentor
+        try {
+            $menthor = Menthor::create([
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'numero_siret' => $request->numero_siret,
+                'score' => $request->score ?? 0,
+                'commentaire' => $request->commentaire ?? '',
+                'annee_experience' => $request->annee_experience ?? 0,
+            ]);
+            return response()->json(['message' => 'Menthor created successfully!', 'menthor' => $menthor], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Une erreur est survenue lors de la création du mentor', 'details' => $e->getMessage()], 500);
+        }
     }
-
+    
     // Inscription Menthorer
     public function registerMenthorer(Request $request)
     {

@@ -1,35 +1,29 @@
-<?php
+    <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateMenthorsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
-{
-    Schema::create('menthors', function (Blueprint $table) {
-        $table->id();
-        $table->string('nom');
-        $table->string('prenom');
-        $table->string('email')->unique();
-        $table->string('mot_de_passe');
-        $table->string('numero_siret')->unique();
-        $table->integer('score')->nullable();
-        $table->text('commentaire')->nullable();
-        $table->integer('annee_experience')->nullable();
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('menthors', function (Blueprint $table) {
+            $table->id();  // ID auto-incrémenté
+            $table->string('nom');  // Nom obligatoire
+            $table->string('prenom');  // Prénom obligatoire
+            $table->string('email')->unique();  // Email unique
+            $table->string('password');
+            $table->string('numero_siret')->unique();  // Numero SIRET unique
+            $table->integer('score')->nullable();  // Score nullable
+            $table->text('commentaire')->nullable();  // Commentaire nullable
+            $table->integer('annee_experience')->nullable();  // Année d'expérience nullable
+            $table->timestamps();  // created_at et updated_at
+        });
+    }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('menthors');
     }
-};
+}

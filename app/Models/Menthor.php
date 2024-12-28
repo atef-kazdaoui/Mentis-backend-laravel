@@ -11,7 +11,7 @@ class Menthor extends Model
 
     // Définit les attributs qui peuvent être assignés en masse
     protected $fillable = [
-        'name',
+        'nom',
         'prenom',
         'email',
         'password',
@@ -27,10 +27,10 @@ class Menthor extends Model
     {
         return $this->hasMany(Menthorer::class);
     }
-
-    // Méthode pour sécuriser l'authentification, en utilisant le mot de passe haché
-    public function setPasswordAttribute($value)
+    public function categories()
     {
-        $this->attributes['password'] = bcrypt($value);
+        return $this->belongsToMany(Category::class, 'category_menthor', 'menthor_id', 'category_id');
     }
+
+   
 }
