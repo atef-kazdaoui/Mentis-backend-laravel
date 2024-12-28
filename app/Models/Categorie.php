@@ -17,6 +17,6 @@ class Categorie extends Model
     
     public function mentors()
     {
-        return $this->belongsToMany(Menthor::class, 'menthor_categorie', 'category_id', 'menthor_id');
+        return $this->belongsToMany(Menthor::class, 'mentor_categorie', 'categorie_id', 'menthor_id');
     }
 }

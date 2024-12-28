@@ -7,7 +7,6 @@ use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\MenthorController;
 
 Route::post('menthors/{menthorId}/add-category', [MenthorController::class, 'addCategoryToMenthor']);
-
 Route::get('categories/{id}/mentors', [MenthorController::class, 'getMentorsByCategory']); // Afficher les mentors d'une catégorie
 Route::post('/addcategorie', [CategorieController::class, 'addCategorie']);
 Route::get('/getallcategorie', [CategorieController::class, 'getAllCategories']);
