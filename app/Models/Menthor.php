@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menthor extends Model
 {
-    use HasFactory;
-
+    use HasFactory; 
     // Définit les attributs qui peuvent être assignés en masse
     protected $fillable = [
         'nom',
@@ -29,7 +28,7 @@ class Menthor extends Model
     }
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'category_menthor', 'menthor_id', 'category_id');
+        return $this->belongsToMany(Categorie::class, 'mentor_categorie', 'menthor_id', 'categorie_id');
     }
 
    

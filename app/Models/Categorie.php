@@ -8,13 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Categorie extends Model
 {
     use HasFactory;
+    
 
     // Attributs assignables en masse
     protected $fillable = [
         'nom',
     ];
+    
     public function mentors()
     {
-        return $this->belongsToMany(Menthor::class, 'category_menthor', 'category_id', 'menthor_id');
+        return $this->belongsToMany(Menthor::class, 'menthor_categorie', 'category_id', 'menthor_id');
     }
 }
