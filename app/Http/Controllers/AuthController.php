@@ -7,6 +7,9 @@ use App\Models\Menthor;
 use App\Models\Menthorer;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class AuthController extends Controller
 {
@@ -47,29 +50,6 @@ class AuthController extends Controller
     }
     
     // Inscription Menthorer
-    public function registerMenthorer(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|email|unique:menthorers,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-    
-        $menthorer = Menthorer::create([
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-    
-        return response()->json(['message' => 'Menthorer created successfully!', 'menthorer' => $menthorer], 201);
-    }
     public function loginMenthorer(Request $request)
     {
         // Validation des données
@@ -82,15 +62,37 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
     
-        // Vérification des identifiants
+        // Recherche de l'utilisateur
         $menthorer = Menthorer::where('email', $request->email)->first();
     
-        if (!$menthorer || !Hash::check($request->password, $menthorer->password)) {
-            return response()->json(['message' => 'Mot de passe ou email incorrect'], 401);
+        // Vérification si l'utilisateur existe
+        if (!$menthorer) {
+            return response()->json(['message' => 'Email non trouvé'], 404);
         }
     
-        // Succès
-        return response()->json(['message' => 'Connexion réussie', 'menthorer' => $menthorer]);
+        $password1=bcrypt($request->password);
+
+        // Vérification du mot de passe
+        if  ( $password1 == $menthorer->password) {
+            return response()->json(['message' => 'Mot de passe incorrect'], 401);
+        }
+    
+        // Génération du token JWT
+        $key = env('JWT_SECRET', 'votre_clé_secrète'); // Assurez-vous d'avoir une clé dans votre fichier .env
+        $payload = [
+            'id' => $menthorer->id,
+            'email' => $menthorer->email,
+            'iat' => time(), // Timestamp actuel
+            'exp' => time() + (60 * 60 * 24), // Expiration : 24 heures
+        ];
+        $token = JWT::encode($payload, $key, 'HS256');
+    
+        // Connexion réussie
+        return response()->json([
+            'message' => 'Connexion réussie',
+            'token' => $token,
+        ]);
     }
+
     
 }
