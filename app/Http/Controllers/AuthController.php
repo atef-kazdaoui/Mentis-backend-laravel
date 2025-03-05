@@ -13,7 +13,7 @@ use Firebase\JWT\Key;
 
 class AuthController extends Controller
 {
-    // Inscription Menthor
+    //******** Inscription Menthor
     public function registerMenthor(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -48,8 +48,38 @@ class AuthController extends Controller
             return response()->json(['error' => 'Une erreur est survenue lors de la création du mentor', 'details' => $e->getMessage()], 500);
         }
     }
+    //***********inscription menthorer 
+
+    public function registerMenthorer(Request $request)
+{
+    // Validation des données
+    $validator = Validator::make($request->all(), [
+        'nom' => 'required|string|max:255',
+        'prenom' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:menthorers',
+        'password' => 'required|string|min:6|confirmed', // Nécessite un champ 'password_confirmation'
+    ]);
+
+    // Vérification des erreurs de validation
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
+    // Création du Menthorer
+    $menthorer = Menthorer::create([
+        'nom' => $request->nom,
+        'prenom' => $request->prenom,
+        'email' => $request->email,
+        'password' => $request->password, // Hashé automatiquement grâce au mutator dans le modèle
+    ]);
+
+    return response()->json([
+        'message' => 'Inscription réussie',
+        'menthorer' => $menthorer
+    ], 201);
+}
     
-    // Inscription Menthorer
+    // ******************* connexion menthorer
     public function loginMenthorer(Request $request)
     {
         // Validation des données
@@ -78,7 +108,9 @@ class AuthController extends Controller
         }
     
         // Génération du token JWT
-        $key = env('JWT_SECRET', 'votre_clé_secrète'); // Assurez-vous d'avoir une clé dans votre fichier .env
+        $CLE_SECURITE = env('CLE_SECURITE');
+
+        $key = env('JWT_SECRET', $CLE_SECURITE); // Assurez-vous d'avoir une clé dans votre fichier .env
         $payload = [
             'id' => $menthorer->id,
             'email' => $menthorer->email,
