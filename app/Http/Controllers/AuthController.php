@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Illuminate\Validation\Rules\Password;
+
 
 class AuthController extends Controller
 {
@@ -17,15 +19,25 @@ class AuthController extends Controller
     public function registerMenthor(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|email|unique:menthors,email',
-            'password' => 'required|string|min:8|confirmed',
-            'numero_siret' => 'required|string|max:14',
-            'score' => 'nullable|numeric',
-            'commentaire' => 'nullable|string',
-            'annee_experience' => 'nullable|numeric',
-        ]);
+    'nom' => 'required|string|max:255',
+    'prenom' => 'required|string|max:255',
+    'email' => 'required|email|unique:menthors,email',
+    'password' => [
+        'required',
+        'string',
+        'confirmed',
+        Password::min(8) // longueur minimale
+            ->mixedCase() // majuscule + minuscule
+            ->letters()   // contient lettres
+            ->numbers()   // contient chiffres
+            ->symbols()   // contient symbole
+            ->uncompromised() // vérifie si le mot de passe est connu (pwned passwords)
+    ],
+    'numero_siret' => 'required|string|max:14',
+    'score' => 'nullable|numeric',
+    'commentaire' => 'nullable|string',
+    'annee_experience' => 'nullable|numeric',
+]);
     
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
@@ -57,10 +69,18 @@ class AuthController extends Controller
         'nom' => 'required|string|max:255',
         'prenom' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:menthorers',
-        'password' => 'required|string|min:6|confirmed', // Nécessite un champ 'password_confirmation'
+        'password' => [
+            'required',
+            'string',
+            'confirmed', 
+            Password::min(8)               // Minimum 8 caractères
+                ->mixedCase()              // Doit contenir des majuscules et minuscules
+                ->numbers()                // Doit contenir au moins un chiffre
+                ->symbols(),               // Doit contenir un caractère spécial
+        ],
     ]);
-
-    // Vérification des erreurs de validation
+    
+    // Vérification des erreurs
     if ($validator->fails()) {
         return response()->json(['errors' => $validator->errors()], 422);
     }
