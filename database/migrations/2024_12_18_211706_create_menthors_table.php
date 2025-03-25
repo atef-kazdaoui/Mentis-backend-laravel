@@ -18,6 +18,7 @@ class CreateMenthorsTable extends Migration
             $table->integer('score')->nullable();  // Score nullable
             $table->text('commentaire')->nullable();  // Commentaire nullable
             $table->integer('annee_experience')->nullable();  // Année d'expérience nullable
+            $table->string('role')->default('menthor');
             $table->timestamps();  // created_at et updated_at
         });
     }

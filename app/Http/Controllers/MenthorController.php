@@ -72,4 +72,18 @@ class MenthorController extends Controller
             ], 500);
         }
     }
+    public function destroy($id)
+    {
+        // Cherche le menthor par son ID
+        $menthor = Menthor::find($id);
+
+        if (!$menthor) {
+            return response()->json(['error' => 'Menthor non trouvé'], 404);
+        }
+
+        // Supprime le menthor
+        $menthor->delete();
+
+        return response()->json(['message' => 'Menthor supprimé avec succès'], 200);
+    }
 }
