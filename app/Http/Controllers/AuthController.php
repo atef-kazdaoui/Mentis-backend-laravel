@@ -34,8 +34,8 @@ class AuthController extends Controller
             ->uncompromised() // vérifie si le mot de passe est connu (pwned passwords)
     ],
     'numero_siret' => 'required|string|max:14',
-    'score' => 'nullable|numeric',
-    'commentaire' => 'nullable|string',
+    'score' => '0',
+    'commentaire' => '',
     'annee_experience' => 'nullable|numeric',
 ]);
     

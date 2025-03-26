@@ -8,6 +8,7 @@ use App\Http\Controllers\MenthorController;
 use App\Http\Middleware\CheckMenthorAccess;
 use App\Http\Controllers\DisponibiliteController;
 use App\Http\Controllers\RendezVousController;
+use App\Http\Controllers\CommentaireController;
 Route::post('/loginMenthor', [MenthorController::class, 'loginMenthor']);
 // Route pour ajouter une disponibilité
 Route::post('/menthor/{menthorId}/disponibilite', [DisponibiliteController::class, 'store']);
@@ -37,3 +38,7 @@ Route::get('categories/{id}/mentors', [MenthorController::class, 'getMentorsByCa
 Route::get('/getallcategorie', [CategorieController::class, 'getAllCategories']);
 
 Route::apiResource('rendezvous', RendezVousController::class);
+
+Route::post('/commentaires/{menthorer_id}', [CommentaireController::class, 'store']);
+
+Route::get('/commentaires', [CommentaireController::class, 'index']);
