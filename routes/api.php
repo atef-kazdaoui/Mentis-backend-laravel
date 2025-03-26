@@ -7,6 +7,8 @@ use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\MenthorController;
 use App\Http\Middleware\CheckMenthorAccess;
 use App\Http\Controllers\DisponibiliteController;
+use App\Http\Controllers\RendezVousController;
+Route::post('/loginMenthor', [MenthorController::class, 'loginMenthor']);
 // Route pour ajouter une disponibilité
 Route::post('/menthor/{menthorId}/disponibilite', [DisponibiliteController::class, 'store']);
 
@@ -33,3 +35,5 @@ Route::post('/menthorer/login', [AuthController::class, 'loginMenthorer']);
 Route::get('categories/{id}/mentors', [MenthorController::class, 'getMentorsByCategory']); // Afficher les mentors d'une catégorie
 
 Route::get('/getallcategorie', [CategorieController::class, 'getAllCategories']);
+
+Route::apiResource('rendezvous', RendezVousController::class);

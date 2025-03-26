@@ -5,9 +5,59 @@ namespace App\Http\Controllers;
 use App\Models\Menthor;
 use App\Models\Categorie;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Firebase\JWT\JWT;
 class MenthorController extends Controller
-{
+{  
+       public function loginMenthor(Request $request)
+    {
+        // Validation des données
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+    
+        // Recherche du Menthor
+        $menthor = Menthor::where('email', $request->email)->first();
+    
+        // Vérification si le Menthor existe
+        if (!$menthor) {
+            return response()->json(['message' => 'Email non trouvé'], 404);
+        }
+    
+        // Vérification du mot de passe
+        if (!\Hash::check($request->password, $menthor->password)) {
+            return response()->json(['message' => 'Mot de passe incorrect'], 401);
+        }
+    
+        // Génération du token JWT
+        $CLE_SECURITE = env('CLE_SECURITE');
+        $key = env('JWT_SECRET', $CLE_SECURITE); // Assurez-vous d'avoir une clé dans votre fichier .env
+        
+        $payload = [
+            'id' => $menthor->id,
+            'email' => $menthor->email,
+            'iat' => time(), // Timestamp actuel
+            'exp' => time() + (60 * 60 * 24), // Expiration : 24 heures
+        ];
+        
+        $token = JWT::encode($payload, $key, 'HS256');
+    
+        // Connexion réussie
+        return response()->json([
+            'message' => 'Connexion réussie',
+            'token' => $token,
+        ]);
+    }
+
+
+
+
     /**
      * Associer une catégorie à un menthor.
      */

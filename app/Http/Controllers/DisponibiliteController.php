@@ -5,35 +5,38 @@ namespace App\Http\Controllers;
 use App\Models\Disponibilite;
 use App\Models\Menthor;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use Firebase\JWT\JWT;
 class DisponibiliteController extends Controller
 {
     // Méthode pour ajouter une disponibilité
     public function store(Request $request, $menthorId)
     {
-        $request->validate([
-            'jour' => 'required|string|max:255',
-            'heure_debut' => 'required|date_format:H:i',
-            'heure_fin' => 'required|date_format:H:i|after:heure_debut', // L'heure de fin doit être après l'heure de début
-        ]);
+         // Validation des données de la disponibilité
+    $validator = Validator::make($request->all(), [
+        'jour' => 'required|string|max:255',
+        'heure_debut' => 'required|date_format:H:i',
+        'heure_fin' => 'required|date_format:H:i|after:heure_debut',
+    ]);
 
-        // Crée une nouvelle disponibilité pour ce menthor
-        $menthor = Menthor::find($menthorId);
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 400);
+    }
 
-        if (!$menthor) {
-            return response()->json(['error' => 'Menthor non trouvé'], 404);
-        }
+    // Créer une nouvelle disponibilité pour le Menthor
+    $disponibilite = new Disponibilite();
+    $disponibilite->menthor_id = 1; // ID du Menthor (ajuste selon ton cas)
+    $disponibilite->jour = $request->jour;
+    $disponibilite->heure_debut = $request->heure_debut;
+    $disponibilite->heure_fin = $request->heure_fin;
 
-        $disponibilite = $menthor->disponibilites()->create([
-            'jour' => $request->jour,
-            'heure_debut' => $request->heure_debut,
-            'heure_fin' => $request->heure_fin,
-        ]);
+    // Enregistrement dans la base de données
+    $disponibilite->save();
 
-        return response()->json([
-            'message' => 'Disponibilité ajoutée avec succès!',
-            'disponibilite' => $disponibilite
-        ], 201);
+    return response()->json([
+        'message' => 'Disponibilité ajoutée avec succès!',
+        'disponibilite' => $disponibilite,
+    ], 201);
     }
 
     // Méthode pour récupérer les disponibilités d'un menthor
