@@ -33,7 +33,7 @@ class AuthController extends Controller
             ->symbols()   // contient symbole
             ->uncompromised() // vérifie si le mot de passe est connu (pwned passwords)
     ],
-    'numero_siret' => 'required|string|max:14',
+    'numero_siret' => '',
     'score' => '0',
     'commentaire' => '',
     'annee_experience' => 'nullable|numeric',

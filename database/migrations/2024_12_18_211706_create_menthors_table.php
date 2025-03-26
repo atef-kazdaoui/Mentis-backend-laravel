@@ -14,7 +14,7 @@ class CreateMenthorsTable extends Migration
             $table->string('prenom');  // Prénom obligatoire
             $table->string('email')->unique();  // Email unique
             $table->string('password');
-            $table->string('numero_siret')->unique();  // Numero SIRET unique
+            $table->string('numero_siret')->nullable()->unique(); // Numero SIRET unique et nullable
             $table->integer('score')->nullable();  // Score nullable
             $table->text('commentaire')->nullable();  // Commentaire nullable
             $table->integer('annee_experience')->nullable();  // Année d'expérience nullable
